@@ -1,0 +1,71 @@
+--Prototipo
+-- Tabela de Profissionais de Saúde
+CREATE TABLE ProfissionaisSaude (
+    ProfissionalID INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    NomeCompleto VARCHAR(150) NOT NULL,
+    Especialidade VARCHAR(100) NOT NULL,
+    CRM VARCHAR(20) UNIQUE NOT NULL,
+    TelefoneContato VARCHAR(20),
+    Email VARCHAR(100) UNIQUE NOT NULL,
+    DataCadastro TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabela de Pacientes
+CREATE TABLE Pacientes (
+    PacienteID INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    NomeCompleto VARCHAR(150) NOT NULL,
+    DataNascimento DATE NOT NULL,
+    CPF VARCHAR(14) UNIQUE NOT NULL,
+    Endereco VARCHAR(255),
+    Telefone VARCHAR(20),
+    Email VARCHAR(100) UNIQUE,
+    ProfissionalResponsavelID INT,
+    DataCadastro TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_profissional_responsavel
+        FOREIGN KEY(ProfissionalResponsavelID)
+        REFERENCES ProfissionaisSaude(ProfissionalID)
+);
+
+-- Tabela de Dispositivos de Monitoramento
+CREATE TABLE Dispositivos (
+    DispositivoID INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    PacienteID INT NOT NULL,
+    TipoDispositivo VARCHAR(50) NOT NULL, -- Ex: 'Monitor Cardíaco', 'Oxímetro', 'Glicosímetro'
+    Modelo VARCHAR(100),
+    NumeroSerie VARCHAR(100) UNIQUE NOT NULL,
+    DataAquisicao DATE,
+    StatusDispositivo VARCHAR(30) DEFAULT 'Ativo', -- 'Ativo', 'Inativo', 'Manutenção'
+    CONSTRAINT fk_paciente_dispositivo
+        FOREIGN KEY(PacienteID)
+        REFERENCES Pacientes(PacienteID)
+);
+
+-- Tabela de Medições de Saúde (Dados Vitais)
+CREATE TABLE MedicoesSaude (
+    MedicaoID BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    DispositivoID INT NOT NULL,
+    TimestampMedicao TIMESTAMP WITH TIME ZONE NOT NULL,
+    TipoMedicao VARCHAR(50) NOT NULL, -- Ex: 'Frequência Cardíaca', 'Saturação de Oxigênio', 'Glicemia'
+    ValorMedicao VARCHAR(50) NOT NULL, -- Usamos VARCHAR para flexibilidade (Ex: '98', '120/80', '95.5')
+    UnidadeMedida VARCHAR(20), -- Ex: 'bpm', '%', 'mg/dL', 'ºC'
+    CONSTRAINT fk_dispositivo_medicao
+        FOREIGN KEY(DispositivoID)
+        REFERENCES Dispositivos(DispositivoID)
+);
+
+-- Tabela de Alertas
+CREATE TABLE Alertas (
+    AlertaID INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    MedicaoID BIGINT NOT NULL,
+    PacienteID INT NOT NULL,
+    TimestampAlerta TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    NivelPrioridade VARCHAR(20) NOT NULL, -- 'Baixo', 'Médio', 'Alto', 'Crítico'
+    Descricao TEXT,
+    StatusAlerta VARCHAR(30) DEFAULT 'Aberto', -- 'Aberto', 'Visualizado', 'Resolvido'
+    CONSTRAINT fk_medicao_alerta
+        FOREIGN KEY(MedicaoID)
+        REFERENCES MedicoesSaude(MedicaoID),
+    CONSTRAINT fk_paciente_alerta
+        FOREIGN KEY(PacienteID)
+        REFERENCES Pacientes(PacienteID)
+);
