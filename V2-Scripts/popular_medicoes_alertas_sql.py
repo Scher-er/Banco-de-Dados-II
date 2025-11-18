@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 DB_CONFIG = {
     'host': '127.0.0.1',
     'user': 'root',        # Seu usuário do MySQL
-    'password': 'Comput2026',        # <--- INSIRA SUA SENHA AQUI
+    'password': '',        # <--- INSIRA SUA SENHA AQUI
     'database': 'acompanhamento_pacientes_bd'
 }
 
@@ -95,4 +95,5 @@ def popular_medicoes_alertas():
     print(f"Sucesso! Foram inseridas {len(lista_medicoes)} medições e {len(lista_alertas)} alertas.")
 
 if __name__ == "__main__":
+
     popular_medicoes_alertas()
