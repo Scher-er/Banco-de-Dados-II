@@ -1,81 +1,60 @@
-# Banco-de-Dados-II
-📊 Projeto de demonstração de uma arquitetura de dados híbrida, usando um banco de dados relacional e um NoSQL em uma mesma aplicação para otimizar consistência e escalabilidade.
+# 🏥 Sistema de Monitoramento Hospitalar Híbrido (SQL + NoSQL)
 
-# Projeto de BD: Monitoramento Remoto de Pacientes (Híbrido)
+> Um sistema completo de monitoramento remoto de pacientes utilizando uma arquitetura de banco de dados híbrida para aliar a integridade de dados cadastrais (MySQL) com a escalabilidade de dados de sensores IoT (MongoDB).
 
-> Este repositório contém a arquitetura e o schema de um sistema de banco de dados híbrido (SQL + NoSQL) projetado para o monitoramento remoto de pacientes hospitalares.
-
-O objetivo deste projeto é criar uma infraestrutura de banco de dados robusta, escalável e eficiente, capaz de gerenciar tanto os dados cadastrais e relacionais dos pacientes quanto o grande volume de dados não estruturados gerados por dispositivos de monitoramento (IoT).
-
----
-
-## 🚀 A Arquitetura Híbrida
-
-Para otimizar o desempenho, a integridade e a flexibilidade, o sistema utiliza dois tipos de bancos de dados:
-
-### 1. Banco de Dados Relacional (MySQL)
-
-Utilizado para armazenar dados **estruturados**, **transacionais** e que exigem alta **integridade referencial** (ACID). É o "coração" cadastral do sistema.
-
-* **O que armazena:**
-    * Dados cadastrais de `Pacientes`.
-    * Dados cadastrais de `Profissionais` (médicos, enfermeiros).
-    * Relacionamentos (ex: qual profissional atende qual paciente).
-    * Endereços normalizados (País, Estado, Cidade, Bairro).
-    * Metadados de `Alertas` e `Medições` (ex: limites críticos, tipo de medição).
-    * `Historico_Medico` estruturado e `Convenios`.
-* **Tecnologia:** MySQL / MariaDB
-* **Schema:** O script SQL para criação do banco (`acompanhamento_pacientes_bd.sql`) está [incluído neste repositório](caminho/para/seu/arquivo.sql).
-
-### 2. Banco de Dados Não Relacional (MongoDB)
-
-Utilizado para armazenar dados **não estruturados**, **semiestruturados** ou de **grande volume** (Big Data), que não exigem um schema rígido e se beneficiam de escalabilidade horizontal.
-
-* **O que armazena:**
-    * **Logs de Equipamentos:** *Streams* de dados brutos gerados pelos dispositivos de monitoramento (ex: monitores cardíacos, oxímetros) em formato JSON.
-    * **Logs da Aplicação:** Logs de auditoria, erros e eventos do sistema.
-    * **Arquivos e Documentos:** (Opcional) Usando o GridFS do MongoDB, é possível armazenar arquivos binários como exames (PDFs, imagens médicas) associados aos pacientes.
-* **Tecnologia:** MongoDB
+![Status](https://img.shields.io/badge/Status-Concluído-brightgreen)
+![Python](https://img.shields.io/badge/Python-3.9+-blue)
+![MySQL](https://img.shields.io/badge/DB-MySQL-orange)
+![MongoDB](https://img.shields.io/badge/DB-MongoDB-green)
+![Streamlit](https://img.shields.io/badge/Frontend-Streamlit-red)
 
 ---
 
-## 🗂️ Estrutura do Banco de Dados
+## 📖 Sobre o Projeto
 
-### Banco Relacional (SQL)
+Este projeto simula o ecossistema de dados de um hospital moderno. O desafio principal é lidar com dois tipos de dados com requisitos opostos:
 
-O schema SQL (baseado no arquivo dump) é centrado na entidade `Pacientes` e suas relações:
+1.  **Dados Estruturados (Relacional):** Cadastros de pacientes, médicos, convênios, endereços e regras de negócio. Para isso, usamos **MySQL**.
+2.  **Dados de Alta Volumetria (Não Relacional):** Logs de monitoramento contínuo (batimentos cardíacos, oxigenação, pressão) gerados por equipamentos médicos IoT e logs de sistema. Para isso, usamos **MongoDB**.
 
-* **Entidades Principais:**
-    * `Pacientes`: Dados cadastrais, contato de emergência e status.
-    * `Profissionais`: Dados da equipe médica.
-* **Relação N:M:**
-    * `Pacientes_has_Profissionais`: Vincula pacientes aos profissionais responsáveis.
-* **Dados de Monitoramento (Estruturados):**
-    * `Medicao`: Registros de medições vitais (ex: tipo="pressão", valor="120/80").
-    * `Alertas`: Gatilhos gerados quando uma medição excede os limites.
-    * `Limites_Alerta`: Limites (mín/máx) personalizados para cada paciente.
-* **Dados Complementares:**
-    * `Historico_Medico`: Eventos de saúde do paciente.
-    * `Convenios`: Informações do plano de saúde.
-* **Endereçamento (Normalizado):**
-    * `Paises` -> `Estados` -> `Cidades` -> `Bairros`
+O sistema inclui scripts de geração de massa de dados (ETL), simulação de dispositivos IoT em tempo real e um Dashboard interativo para a equipe médica.
 
-### Banco Não Relacional (NoSQL)
+---
 
-A estrutura no MongoDB é flexível e baseada em coleções. Um exemplo de documento para um log de equipamento poderia ser:
+## 🏗️ Arquitetura do Banco de Dados
 
-**Coleção: `leituras_equipamentos`**
-```json
-{
-  "id_paciente_sql": 1, // Chave para relacionar com o paciente no SQL
-  "id_dispositivo": "MONITOR_CARDIACO_A45B",
-  "timestamp": "2025-11-15T11:45:02.123Z",
-  "tipo_leitura": "ECG",
-  "dados": {
-    "bpm": 82,
-    "saturacao_o2": 98,
-    "pressao_sistolica": 122,
-    "pressao_diastolica": 79,
-    "status_bateria_dispositivo": "75%"
-  }
-}
+### 1. Banco Relacional (MySQL)
+Responsável pelo "Core Business" do hospital (ACID Compliance).
+* **Tabelas Principais:** `Pacientes`, `Profissionais`, `Consultas`, `Alertas`, `Endereços` (Normalizado).
+* **Lógica de Banco (Backend):**
+    * **Trigger (`trg_auditoria_alerta_delete`):** Auditoria automática que salva alertas deletados em uma tabela de log (`log_alertas_excluidos`), garantindo rastreabilidade.
+    * **Stored Procedure (`sp_fechar_alertas_antigos`):** Rotina para limpeza e manutenção automática, fechando alertas ativos há mais de X dias.
+
+### 2. Banco Não Relacional (MongoDB)
+Responsável pelo "Big Data", flexibilidade e velocidade de escrita.
+* **Coleção `leituras_equipamentos`:** Recebe streams de dados JSON dos sensores. O Schema Validation garante a presença de campos vitais como `timestamp` e chaves estrangeiras do SQL.
+* **Coleção `logs_alertas_disparados`:** Armazena o contexto detalhado (JSON complexo) de quando um alerta é gerado.
+* **Coleção `logs_aplicacao`:** Auditoria técnica do sistema.
+
+---
+
+## 🚀 Tecnologias Utilizadas
+
+* **Linguagem:** Python 3
+* **Banco SQL:** MySQL
+* **Banco NoSQL:** MongoDB
+* **Bibliotecas Python:**
+    * `mysql-connector-python`: Conector nativo para MySQL.
+    * `pymongo`: Driver oficial do MongoDB.
+    * `faker`: Geração de dados realistas (nomes brasileiros, CPFs, endereços).
+    * `streamlit`: Framework para criação da Interface de Usuário (Dashboard).
+    * `pandas` & `plotly`: Manipulação e visualização de dados.
+
+---
+
+## 📦 Instalação e Configuração
+
+### Pré-requisitos
+* MySQL Server rodando na porta `3306`.
+* MongoDB Server rodando na porta `27017`.
+* Python instalado.
