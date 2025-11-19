@@ -28,7 +28,7 @@ Responsável pelo "Core Business" do hospital (ACID Compliance).
 * **Tabelas Principais:** `Pacientes`, `Profissionais`, `Consultas`, `Alertas`, `Endereços` (Normalizado).
 * **Lógica de Banco (Backend):**
     * **Trigger (`trg_auditoria_alerta_delete`):** Auditoria automática que salva alertas deletados em uma tabela de log (`log_alertas_excluidos`), garantindo rastreabilidade.
-    * **Stored Procedure (`sp_fechar_alertas_antigos`):** Rotina para limpeza e manutenção automática, fechando alertas ativos há mais de X dias.
+    * **Stored Procedure (`SP_Obter_Ultima_Medicao`):** Uma SP que puxa os dados da ultima medição do paciente solicitado.
 
 ### 2. Banco Não Relacional (MongoDB)
 Responsável pelo "Big Data", flexibilidade e velocidade de escrita.
