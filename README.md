@@ -23,7 +23,7 @@ O sistema inclui scripts de geração de massa de dados (ETL), simulação de di
 
 ## 🏗️ Arquitetura do Banco de Dados
 
-### 1. Banco Relacional (MySQL)
+### 1. Banco Relacional (SQL)
 Responsável pelo "Core Business" do hospital (ACID Compliance).
 * **Tabelas Principais:** `Pacientes`, `Profissionais`, `Consultas`, `Alertas`, `Endereços` (Normalizado).
 * **Lógica de Banco (Backend):**
@@ -41,7 +41,7 @@ Responsável pelo "Big Data", flexibilidade e velocidade de escrita.
 ## 🚀 Tecnologias Utilizadas
 
 * **Linguagem:** Python 3
-* **Banco SQL:** MySQL
+* **Banco SQL
 * **Banco NoSQL:** MongoDB
 * **Bibliotecas Python:**
     * `mysql-connector-python`: Conector nativo para MySQL.
