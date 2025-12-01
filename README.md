@@ -4,7 +4,7 @@
 
 ![Status](https://img.shields.io/badge/Status-Concluído-brightgreen)
 ![Python](https://img.shields.io/badge/Python-3.9+-blue)
-![MySQL](https://img.shields.io/badge/DB-MySQL-orange)
+![SQL](https://img.shields.io/badge/DB-MySQL-orange)
 ![MongoDB](https://img.shields.io/badge/DB-MongoDB-green)
 ![Streamlit](https://img.shields.io/badge/Frontend-Streamlit-red)
 
