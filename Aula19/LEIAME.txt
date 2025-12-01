@@ -1,0 +1,4 @@
+Sobre a arquitetura, decidi usar o modelo Peer-to-Peer (P2P) em vez de criar um servidor central separado. Fiz essa escolha pela praticidade: assim, o mesmo programa consegue tanto criar a sala (agindo como Host) quanto entrar nela (como Cliente). Isso facilita muito na hora de testar e jogar, porque a gente não precisa rodar um terceiro programa só para gerenciar a partida; é só conectar direto um computador no outro e teoricamente pronto.
+
+Eu não consegui testar o programa na ultima edição que fiz, a pessoa que estava comigo levou o notebook embora, mas da ultima vez houve conexão.
+Tentei abrir o programa duas vezes para ser o host e o jogador convidado, mas meu programa estava dando conflito. Estou confiante que está certo, mas não consegui testar kkkkkk
